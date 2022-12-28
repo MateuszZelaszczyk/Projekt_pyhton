@@ -6,16 +6,16 @@ import django.utils.timezone as timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin,BaseUserManager, User
 
 class UserAccountManager(BaseUserManager):
-    def create_user(self, firstname, lastname, email, phone, password=None):
+    def create_user(self, firstname, lastname, email, password=None):
         email=self.normalize_email(email)
-        user=self.model(email=email, firstname=firstname, lastname=lastname, phone=phone)
+        user=self.model(email=email, firstname=firstname, lastname=lastname)
 
         user.set_password(password)
         
         user.save()
         return user
-    def create_superuser(self, firstname, lastname, email, phone, password=None):
-        user=self.model(email=email, firstname=firstname, lastname=lastname, phone=phone)
+    def create_superuser(self, firstname, lastname, email, password=None):
+        user=self.model(email=email, firstname=firstname, lastname=lastname)
         is_active=True
         user.set_password(password)
         user.save()
@@ -26,9 +26,8 @@ class Users(AbstractBaseUser, PermissionsMixin):
     firstname=models.CharField(max_length=30)
     lastname=models.CharField(max_length=30)
     email = models.EmailField(max_length=40, unique=True)
-    phone =models.CharField(max_length=20, unique=True)
     is_active=models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=True)
 
     objects=UserAccountManager()
 
@@ -37,3 +36,12 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+class Training(models.Model):
+    email=models.EmailField()
+    nazwa=models.CharField(max_length=50)
+    dystans=models.CharField(max_length=10)
+    czas= models.FloatField(default=0)
+    gatunek =models.DateField()
+    def __str__(self):
+        return self.nazwa
