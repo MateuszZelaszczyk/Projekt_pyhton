@@ -1,2 +1,3 @@
 backend/runnersclub/migrations
 .env
+backend/backend/__pycache__
