@@ -44,7 +44,7 @@ class Training(models.Model):
     nazwa=models.CharField(max_length=50)
     dystans=models.FloatField(default=0)
     czas= models.TimeField(default=0)
-    sredne_tempo = models.FloatField(default=0)
+    sredne_tempo = models.CharField(max_length=50, default="")
     srednia_predkosc = models.FloatField(default=0)
     data = models.DateField(default=datetime.date.today)
     def save(self,*args,**kwargs):
@@ -52,7 +52,14 @@ class Training(models.Model):
         self.srednia_predkosc=self.dystans/time_conv
         self.srednia_predkosc=round(self.srednia_predkosc,2)
         
-        
+        time_conv2 = (float(self.czas.strftime('%H'))*60)+float(self.czas.strftime('%M'))+(float(self.czas.strftime('%S'))/60)
+        self.sredne_tempo = ((time_conv2/self.dystans))
+        dziesietna= self.sredne_tempo-int(self.sredne_tempo)
+        if dziesietna*0.6<0.1:
+            self.sredne_tempo=(str(int(self.sredne_tempo))+":0"+str(round((dziesietna*0.6)*100)))
+        else:
+            self.sredne_tempo=(str(int(self.sredne_tempo))+":"+str(round((dziesietna*0.6)*100)))
+
         super(Training, self).save(*args, **kwargs)
     def __str__(self):
         return self.nazwa
