@@ -4,6 +4,7 @@ from django.db.models.deletion import CASCADE
 from django.db.models.fields import Field
 import django.utils.timezone as timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin,BaseUserManager, User
+import  datetime
 
 class UserAccountManager(BaseUserManager):
     def create_user(self, firstname, lastname, email, password=None):
@@ -39,9 +40,19 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
 class Training(models.Model):
     email=models.EmailField()
+    dyscyplina=models.CharField(max_length=50)
     nazwa=models.CharField(max_length=50)
-    dystans=models.CharField(max_length=10)
-    czas= models.FloatField(default=0)
-    gatunek =models.DateField()
+    dystans=models.FloatField(default=0)
+    czas= models.TimeField(default=0)
+    sredne_tempo = models.FloatField(default=0)
+    srednia_predkosc = models.FloatField(default=0)
+    data = models.DateField(default=datetime.date.today)
+    def save(self,*args,**kwargs):
+        time_conv = float(self.czas.strftime('%H'))+(float(self.czas.strftime('%M'))/60)+(float(self.czas.strftime('%S'))/3600)
+        self.srednia_predkosc=self.dystans/time_conv
+        self.srednia_predkosc=round(self.srednia_predkosc,2)
+        
+        
+        super(Training, self).save(*args, **kwargs)
     def __str__(self):
         return self.nazwa
